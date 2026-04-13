@@ -1,0 +1,709 @@
+!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Análisis de Color Personalizado</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        serif: ['Cormorant Garamond', 'serif'],
+                        sans: ['DM Sans', 'sans-serif'],
+                    },
+                    colors: {
+                        cream: '#FAF6F1',
+                        warm: '#F5EDE3',
+                        blush: '#EDD5C5',
+                        damasc: '#D4735A',
+                        'damasc-d': '#B85840',
+                        'damasc-l': '#E8906A',
+                        'damasc-xl': '#FAE8DF',
+                        amber: '#C8823E',
+                        'amber-l': '#E0A870',
+                        brown: '#3B2218',
+                        text: '#2E1A14',
+                        'text-m': '#5A3C34',
+                        'text-l': '#9A7870',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #FAF6F1;
+            background-image:
+                radial-gradient(ellipse 60% 50% at 0% 0%, rgba(212,115,90,.07) 0%, transparent 55%),
+                radial-gradient(ellipse 50% 40% at 100% 100%, rgba(200,130,62,.06) 0%, transparent 50%);
+        }
+        .not-serif { font-family: 'DM Sans', sans-serif; }
+    </style>
+</head>
+<body className="font-sans text-text">
+    <div id="app" class="max-w-xl mx-auto px-4 py-8 md:py-12">
+        <!-- Header -->
+        <header class="text-center mb-12">
+            <h1 class="font-serif text-3xl md:text-4xl font-bold text-brown leading-tight">
+                Colores que potencian<br>
+                <em class="text-damasc-d italic not-serif">tu atractivo</em>
+            </h1>
+            <p class="text-sm text-text-m mt-4 max-w-sm mx-auto leading-relaxed">
+                La atracción no es solo química. También es percepción.
+                Descubre en minutos qué colores favorecen tu tono de piel.
+            </p>
+            <div class="text-[10px] text-text-l mt-4 tracking-widest uppercase">
+                Un complemento de · <em class="italic text-damasc-d font-serif text-xs tracking-normal">El amor no se improvisa</em> · Sofía Arrabal
+            </div>
+        </header>
+
+        <!-- Step 1: Upload -->
+        <div id="upload-step" class="space-y-6">
+            <section class="bg-white border border-damasc/10 rounded-2xl p-6 shadow-sm">
+                <div class="inline-block text-[10px] font-bold px-3 py-1 rounded-full bg-damasc-xl text-damasc-d tracking-wider uppercase mb-3">
+                    Paso 1 — Sube tu foto
+                </div>
+                <p class="text-sm text-text-m mb-4 leading-relaxed">
+                    Sube una foto con luz natural y sin filtros. Aparecerá en tu informe personalizado.
+                </p>
+                
+                <div id="drop-zone" class="border-2 border-dashed border-damasc/30 rounded-xl p-8 text-center cursor-pointer hover:bg-damasc-xl hover:border-damasc transition-all group">
+                    <input type="file" id="file-input" accept="image/*" class="hidden">
+                    <div class="w-12 h-12 bg-damasc-xl rounded-full flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform">
+                        <svg class="w-5 h-5 text-damasc-d" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+                    </div>
+                    <h3 class="text-sm font-semibold text-brown mb-1">Toca aquí para subir tu foto</h3>
+                    <p class="text-xs text-text-l">JPG o PNG · Luz natural · Sin filtros</p>
+                </div>
+
+                <div id="preview-container" class="mt-4 hidden flex justify-center">
+                    <img id="preview-img" src="" alt="Preview" class="max-h-48 rounded-xl border border-blush shadow-sm">
+                </div>
+            </section>
+
+            <!-- Step 2: Quiz -->
+            <section class="bg-white border border-damasc/10 rounded-2xl p-6 shadow-sm">
+                <div class="inline-block text-[10px] font-bold px-3 py-1 rounded-full bg-damasc-xl text-damasc-d tracking-wider uppercase mb-3">
+                    Paso 2 — Descubre tu subtono
+                </div>
+                <p class="text-sm text-text-m mb-6 leading-relaxed">
+                    Responde estas 3 preguntas. Son las mismas que usa una colorimetrista profesional.
+                </p>
+
+                <div class="space-y-8">
+                    <!-- Q1 -->
+                    <div class="space-y-4">
+                        <span class="text-[10px] font-bold text-damasc-d uppercase tracking-widest">Pregunta 1 de 3</span>
+                        <h4 class="text-base font-semibold text-brown">Observa las venas de la muñeca interior bajo luz natural.</h4>
+                        <p class="text-xs text-text-l">¿De qué color predominante las ves?</p>
+                        <div class="grid grid-cols-3 gap-3" id="q1-options">
+                            <button data-q="q1" data-val="calido" class="quiz-opt p-3 rounded-xl border-2 border-transparent bg-warm hover:bg-damasc-xl transition-all text-center space-y-2">
+                                <div class="flex justify-center gap-1">
+                                    <div class="w-4 h-4 rounded-full bg-[#4A8A50]"></div>
+                                    <div class="w-4 h-4 rounded-full bg-[#5A9A60]"></div>
+                                </div>
+                                <div class="text-xs font-bold text-brown leading-tight">Verdosas</div>
+                                <div class="text-[9px] text-text-l leading-tight">Principalmente verdes</div>
+                            </button>
+                            <button data-q="q1" data-val="frio" class="quiz-opt p-3 rounded-xl border-2 border-transparent bg-warm hover:bg-damasc-xl transition-all text-center space-y-2">
+                                <div class="flex justify-center gap-1">
+                                    <div class="w-4 h-4 rounded-full bg-[#4A60B0]"></div>
+                                    <div class="w-4 h-4 rounded-full bg-[#7A50A0]"></div>
+                                </div>
+                                <div class="text-xs font-bold text-brown leading-tight">Azules</div>
+                                <div class="text-[9px] text-text-l leading-tight">Azules o moradas</div>
+                            </button>
+                            <button data-q="q1" data-val="neutro" class="quiz-opt p-3 rounded-xl border-2 border-transparent bg-warm hover:bg-damasc-xl transition-all text-center space-y-2">
+                                <div class="flex justify-center gap-1">
+                                    <div class="w-4 h-4 rounded-full bg-[#4A8A50]"></div>
+                                    <div class="w-4 h-4 rounded-full bg-[#4A60B0]"></div>
+                                </div>
+                                <div class="text-xs font-bold text-brown leading-tight">Mixtas</div>
+                                <div class="text-[9px] text-text-l leading-tight">No puedo decidir</div>
+                            </button>
+                        </div>
+                    </div>
+
+                    <hr class="border-blush">
+
+                    <!-- Q2 -->
+                    <div class="space-y-4">
+                        <span class="text-[10px] font-bold text-damasc-d uppercase tracking-widest">Pregunta 2 de 3</span>
+                        <h4 class="text-base font-semibold text-brown">¿Qué metal favorece más tu tono?</h4>
+                        <p class="text-xs text-text-l">Piensa en accesorios que uses cerca del rostro.</p>
+                        <div class="grid grid-cols-3 gap-3" id="q2-options">
+                            <button data-q="q2" data-val="calido" class="quiz-opt p-3 rounded-xl border-2 border-transparent bg-warm hover:bg-damasc-xl transition-all text-center space-y-2">
+                                <div class="flex justify-center">
+                                    <div class="w-8 h-8 rounded-full shadow-sm" style="background: linear-gradient(135deg,#D4A840,#C8813A)"></div>
+                                </div>
+                                <div class="text-xs font-bold text-brown leading-tight">Oro y cobre</div>
+                                <div class="text-[9px] text-text-l leading-tight">Tonos cálidos</div>
+                            </button>
+                            <button data-q="q2" data-val="frio" class="quiz-opt p-3 rounded-xl border-2 border-transparent bg-warm hover:bg-damasc-xl transition-all text-center space-y-2">
+                                <div class="flex justify-center">
+                                    <div class="w-8 h-8 rounded-full shadow-sm" style="background: linear-gradient(135deg,#C0C8D8,#8090B0)"></div>
+                                </div>
+                                <div class="text-xs font-bold text-brown leading-tight">Plata y acero</div>
+                                <div class="text-[9px] text-text-l leading-tight">Tonos fríos</div>
+                            </button>
+                            <button data-q="q2" data-val="neutro" class="quiz-opt p-3 rounded-xl border-2 border-transparent bg-warm hover:bg-damasc-xl transition-all text-center space-y-2">
+                                <div class="flex justify-center gap-1">
+                                    <div class="w-7 h-7 rounded-full shadow-sm" style="background: linear-gradient(135deg,#D4A840,#C8813A)"></div>
+                                    <div class="w-7 h-7 rounded-full shadow-sm" style="background: linear-gradient(135deg,#C0C8D8,#8090B0)"></div>
+                                </div>
+                                <div class="text-xs font-bold text-brown leading-tight">Ambos</div>
+                                <div class="text-[9px] text-text-l leading-tight">No noto diferencia</div>
+                            </button>
+                        </div>
+                    </div>
+
+                    <hr class="border-blush">
+
+                    <!-- Q3 -->
+                    <div class="space-y-4">
+                        <span class="text-[10px] font-bold text-damasc-d uppercase tracking-widest">Pregunta 3 de 3</span>
+                        <h4 class="text-base font-semibold text-brown">¿Cómo reacciona la piel al sol?</h4>
+                        <p class="text-xs text-text-l">Sin protector solar, en exposición moderada.</p>
+                        <div class="grid grid-cols-3 gap-3" id="q3-options">
+                            <button data-q="q3" data-val="calido" class="quiz-opt p-3 rounded-xl border-2 border-transparent bg-warm hover:bg-damasc-xl transition-all text-center space-y-2">
+                                <div class="text-2xl">☀️</div>
+                                <div class="text-xs font-bold text-brown leading-tight">Me bronceo</div>
+                                <div class="text-[9px] text-text-l leading-tight">Fácilmente</div>
+                            </button>
+                            <button data-q="q3" data-val="frio" class="quiz-opt p-3 rounded-xl border-2 border-transparent bg-warm hover:bg-damasc-xl transition-all text-center space-y-2">
+                                <div class="text-2xl">🔴</div>
+                                <div class="text-xs font-bold text-brown leading-tight">Me enrojezco</div>
+                                <div class="text-[9px] text-text-l leading-tight">Me cuesta broncearme</div>
+                            </button>
+                            <button data-q="q3" data-val="neutro" class="quiz-opt p-3 rounded-xl border-2 border-transparent bg-warm hover:bg-damasc-xl transition-all text-center space-y-2">
+                                <div class="text-2xl">🌤️</div>
+                                <div class="text-xs font-bold text-brown leading-tight">Un poco de ambos</div>
+                                <div class="text-[9px] text-text-l leading-tight">Bronceado con rojez</div>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-8">
+                    <button id="analyze-btn" disabled class="w-full py-4 rounded-full bg-gradient-to-r from-[#2d7a5e] to-[#1f5c46] text-white font-bold text-sm shadow-lg shadow-[#2d7a5e]/30 hover:shadow-xl hover:shadow-[#2d7a5e]/40 disabled:opacity-40 disabled:cursor-not-allowed transition-all active:scale-[0.98]">
+                        Ver mi paleta personalizada
+                    </button>
+                    <p id="hint-text" class="text-[10px] text-text-l text-center mt-3">
+                        Sube tu foto y responde las 3 preguntas para continuar
+                    </p>
+                </div>
+            </section>
+
+            <!-- Quote -->
+            <div class="bg-gradient-to-br from-brown to-[#2a1208] rounded-2xl p-8 text-center relative overflow-hidden">
+                <div class="absolute top-[-20px] left-4 font-serif text-8xl text-damasc opacity-10 pointer-events-none">"</div>
+                <div class="relative z-10">
+                    <strong class="block font-serif text-lg text-white mb-2">¿Por qué importan los colores?</strong>
+                    <p class="text-sm text-white/70 leading-relaxed">
+                        Cómo te ves influye en cómo te sientes y en cómo te perciben. 
+                        Los colores que usas son uno de los factores más ignorados en la atracción.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Step -->
+        <div id="results-step" class="hidden space-y-6 pb-12">
+            <section class="bg-white border border-damasc/10 rounded-2xl p-6 shadow-sm">
+                <div class="flex flex-col items-center text-center mb-6">
+                    <img id="result-img" src="" alt="User" class="w-20 h-20 rounded-full object-cover border-2 border-blush mb-4 shadow-sm hidden">
+                    <div class="flex items-center gap-4">
+                        <div id="result-swatch" class="w-12 h-12 rounded-full border-2 border-black/5 shadow-inner"></div>
+                        <div class="text-left">
+                            <h2 id="result-label" class="font-serif text-2xl font-bold text-brown"></h2>
+                            <p id="result-desc" class="text-xs text-text-m"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-warm rounded-xl p-4 space-y-4">
+                    <div class="bg-white/50 rounded-lg p-3 space-y-2">
+                        <h5 class="text-[10px] font-bold text-damasc-d uppercase tracking-widest mb-2">Tus respuestas</h5>
+                        <div id="answers-summary" class="space-y-1"></div>
+                    </div>
+                    <div>
+                        <h5 class="text-[10px] font-bold text-damasc-d uppercase tracking-widest mb-2 flex items-center gap-1">
+                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            ¿Qué significa?
+                        </h5>
+                        <p id="result-explanation" class="text-xs text-text-m leading-relaxed"></p>
+                    </div>
+                    <div>
+                        <h5 class="text-[10px] font-bold text-damasc-d uppercase tracking-widest mb-2">Referentes con este tono</h5>
+                        <div id="result-celebs" class="flex flex-wrap gap-2"></div>
+                    </div>
+                </div>
+
+                <hr class="border-blush my-6">
+
+                <div class="space-y-4">
+                    <h5 class="text-[10px] font-bold text-damasc-d uppercase tracking-widest">Colores que te favorecen</h5>
+                    <div id="favors-grid" class="grid grid-cols-4 sm:grid-cols-6 gap-4"></div>
+                </div>
+
+                <div class="space-y-4 mt-8">
+                    <h5 class="text-[10px] font-bold text-damasc-d uppercase tracking-widest">Colores a evitar</h5>
+                    <div id="avoid-grid" class="grid grid-cols-4 sm:grid-cols-6 gap-4"></div>
+                </div>
+            </section>
+
+            <section class="bg-white border border-damasc/10 rounded-2xl p-6 shadow-sm">
+                <h5 class="text-[10px] font-bold text-damasc-d uppercase tracking-widest mb-4">Tu paleta por situación</h5>
+                <div id="situations-grid" class="grid grid-cols-2 sm:grid-cols-5 gap-3"></div>
+                <p class="text-[10px] text-text-l mt-4 leading-relaxed">
+                    Estos colores están optimizados para proyectar la mejor versión de ti en cada contexto.
+                </p>
+            </section>
+
+            <section class="bg-white border border-damasc/10 rounded-2xl p-6 shadow-sm">
+                <h5 class="text-[10px] font-bold text-damasc-d uppercase tracking-widest mb-4">Combinaciones completas</h5>
+                <p class="text-xs text-text-l mb-4">Looks listos para usar — 3 colores que funcionan juntos para tu tono.</p>
+                <div id="combos-list" class="space-y-3"></div>
+            </section>
+
+            <section class="bg-white border border-damasc/10 rounded-2xl p-6 shadow-sm">
+                <h5 class="text-[10px] font-bold text-damasc-d uppercase tracking-widest mb-4">6 reglas para combinar sin error</h5>
+                <div id="tips-list" class="space-y-3"></div>
+            </section>
+
+            <section class="bg-white border border-damasc/10 rounded-2xl p-6 shadow-sm">
+                <h5 class="text-[10px] font-bold text-damasc-d uppercase tracking-widest mb-4">Tip especial para tu próxima cita</h5>
+                <div class="bg-damasc-xl rounded-xl p-4 border-l-4 border-damasc-d">
+                    <p id="date-tip" class="text-sm text-text-m leading-relaxed italic"></p>
+                </div>
+            </section>
+
+            <section class="bg-white border border-damasc/10 rounded-2xl p-8 text-center space-y-4">
+                <p class="font-serif text-lg font-bold text-brown">
+                    Un complemento de <em class="text-damasc-d">El amor no se improvisa</em>
+                </p>
+                <p class="text-xs text-text-m leading-relaxed">
+                    Este análisis de color es una herramienta para potenciar la presencia y la atracción — 
+                    un complemento práctico a las 7 herramientas de la guía.
+                </p>
+                <div class="flex flex-wrap justify-center gap-2">
+                    <span class="bg-damasc-xl text-damasc-d text-[10px] font-bold px-3 py-1 rounded-full">Comunicación</span>
+                    <span class="bg-damasc-xl text-damasc-d text-[10px] font-bold px-3 py-1 rounded-full">Límites sanos</span>
+                    <span class="bg-damasc-xl text-damasc-d text-[10px] font-bold px-3 py-1 rounded-full">Conexión diaria</span>
+                    <span class="bg-damasc-xl text-damasc-d text-[10px] font-bold px-3 py-1 rounded-full">Reparación</span>
+                </div>
+            </section>
+
+            <div class="space-y-4">
+                <div class="bg-white border border-damasc/10 rounded-2xl p-6 text-center shadow-sm">
+                    <h5 class="text-[10px] font-bold text-damasc-d uppercase tracking-widest mb-4">Guarda tu paleta</h5>
+                    <button id="export-btn" class="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-gradient-to-r from-[#2d7a5e] to-[#1f5c46] text-white font-bold text-sm shadow-lg shadow-[#2d7a5e]/30 hover:shadow-xl hover:shadow-[#2d7a5e]/40 transition-all active:scale-[0.98]">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+                        Descargar paleta como imagen
+                    </button>
+                    <p class="text-[10px] text-text-l mt-3">Guárdala en tu teléfono para tenerla siempre a mano</p>
+                </div>
+
+                <div class="bg-white border border-damasc/10 rounded-2xl p-8 text-center space-y-4 shadow-sm">
+                    <p class="font-serif text-base font-bold text-brown">
+                        ¿Tu pareja y tus amistades quieren saber <em class="text-damasc-d">cómo está su relación</em>?
+                    </p>
+                    <p class="text-xs text-text-m leading-relaxed">
+                        Comparte el quiz — 5 preguntas, resultado inmediato, sin registro.
+                    </p>
+                    <button class="w-full py-4 rounded-full bg-gradient-to-r from-[#2d7a5e] to-[#1f5c46] text-white font-bold text-sm shadow-lg shadow-[#2d7a5e]/30 hover:shadow-xl hover:shadow-[#2d7a5e]/40 transition-all active:scale-[0.98] flex items-center justify-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path></svg>
+                        Compartir el quiz
+                    </button>
+                </div>
+            </div>
+
+            <footer class="text-center pt-8">
+                <p class="text-[10px] text-text-l leading-relaxed uppercase tracking-widest">
+                    © 2025 Sofía Arrabal · <em class="italic font-serif text-xs tracking-normal normal-case">El amor no se improvisa</em><br>
+                    Todos los derechos reservados
+                </p>
+            </footer>
+        </div>
+    </div>
+
+    <script>
+        const DATA = {
+            calido: {
+                label: "Tono cálido",
+                desc: "Subtonos dorados, melocotón o amarillo en tu piel",
+                explanation: "Los tonos cálidos tienen un subtono dorado o anaranjado. Al sol, la piel broncea fácilmente en vez de ponerse roja. Las venas de la muñeca tienden a verse verdes. Los metales dorados favorecen más que los plateados.",
+                celebs: ["Jennifer Lopez", "Beyoncé", "Sofía Vergara", "Penélope Cruz", "Ricky Martin", "Bruno Mars"],
+                swatchColor: "#C8813A",
+                favors: [
+                    { color: "#C8813A", name: "Terracota" }, { color: "#D4A840", name: "Mostaza" }, { color: "#7A9E5A", name: "Verde oliva" },
+                    { color: "#C05040", name: "Rojo ladrillo" }, { color: "#8B5E3C", name: "Café dorado" }, { color: "#E8A050", name: "Durazno" },
+                    { color: "#B87830", name: "Cobre" }, { color: "#6A7A30", name: "Caqui" }, { color: "#A04030", name: "Vino tinto" },
+                    { color: "#F0C870", name: "Amarillo cálido" }, { color: "#D48050", name: "Salmón cálido" }, { color: "#504020", name: "Marrón oscuro" }
+                ],
+                avoid: [
+                    { color: "#7070EE", name: "Azul eléctrico" }, { color: "#C8C8C8", name: "Gris frío" }, { color: "#C060A0", name: "Rosa fucsia" },
+                    { color: "#5050C0", name: "Azul marino frío" }, { color: "#A0A0C0", name: "Lila grisáceo" }, { color: "#80C0D0", name: "Azul cielo frío" },
+                    { color: "#E0E0E0", name: "Blanco frío" }, { color: "#606080", name: "Gris azulado" }
+                ],
+                situations: {
+                    citas: ["#C05040", "#A04030", "#E8A050", "#8B5E3C", "#D4A840"],
+                    trabajo: ["#4A5A40", "#7A5030", "#6A7A30", "#8B5E3C", "#504020"],
+                    diario: ["#D4A840", "#7A9E5A", "#C8813A", "#E8A050", "#B87830"],
+                    noche: ["#A04030", "#504020", "#8B5E3C", "#C8813A", "#6A7A30"],
+                    casual: ["#D4A840", "#C8813A", "#7A9E5A", "#E8A050", "#F0C870"]
+                },
+                combos: [
+                    { name: "Noche de cita", colors: ["#C05040", "#F5EFE6", "#8B5E3C"], desc: "Rojo ladrillo + crema + café dorado. Sofisticada y cálida." },
+                    { name: "Día casual", colors: ["#D4A840", "#7A9E5A", "#F0C870"], desc: "Mostaza + verde oliva + amarillo cálido. Fresca y natural." },
+                    { name: "Reunión de trabajo", colors: ["#504020", "#6A7A30", "#C8813A"], desc: "Marrón + caqui + terracota. Profesional sin perder personalidad." },
+                    { name: "Salida de noche", colors: ["#A04030", "#504020", "#D4A840"], desc: "Vino tinto + marrón oscuro + mostaza. Dramática y elegante." }
+                ],
+                tips: [
+                    "Combina terracota + crema + café: clásico infalible para cualquier ocasión.",
+                    "El dorado y el cobre en accesorios potencian el brillo natural del tono cálido.",
+                    "Evita los grises fríos y azules eléctricos cerca del rostro — apagan este tono.",
+                    "El rojo ladrillo es el neutro de lujo para pieles cálidas: combina con casi todo.",
+                    "Para una cita, elige prendas en tonos tierra cerca del rostro y contrasta abajo.",
+                    "Los accesorios en cobre o dorado completan cualquier look sin competir con la piel."
+                ],
+                dateTip: "Para una cita, <strong>rojo ladrillo o terracota</strong> en la prenda principal transmiten calidez, confianza y presencia — y contrastan de forma perfecta con el tono dorado. Completa con accesorios en cobre o dorado."
+            },
+            frio: {
+                label: "Tono frío",
+                desc: "Subtonos rosados, azulados o violáceos en tu piel",
+                explanation: "Los tonos fríos tienen un subtono rosado, azulado o violáceo. Al sol, la piel tiende a enrojecerse antes de broncearse. Las venas de la muñeca se ven azules o moradas. Los metales plateados realzan más este tono que los dorados.",
+                celebs: ["Angelina Jolie", "Nicole Kidman", "Cate Blanchett", "Lupita Nyong'o", "Jared Leto", "Michael B. Jordan"],
+                swatchColor: "#8080B0",
+                favors: [
+                    { color: "#4A70A8", name: "Azul zafiro" }, { color: "#7A5A8A", name: "Ciruela" }, { color: "#2A6A5A", name: "Esmeralda" },
+                    { color: "#C07090", name: "Frambuesa" }, { color: "#5A6075", name: "Gris perla" }, { color: "#2A4A8A", name: "Azul marino" },
+                    { color: "#8A3A6A", name: "Magenta oscuro" }, { color: "#3A7A70", name: "Turquesa frío" }, { color: "#604A80", name: "Púrpura" },
+                    { color: "#B04070", name: "Rosa intenso" }, { color: "#304060", name: "Azul pizarra" }, { color: "#F0F0F8", name: "Blanco frío" }
+                ],
+                avoid: [
+                    { color: "#D4954A", name: "Naranja" }, { color: "#C8A030", name: "Ocre amarillo" }, { color: "#C8813A", name: "Terracota" },
+                    { color: "#8B5E3C", name: "Café dorado" }, { color: "#D4A840", name: "Mostaza" }, { color: "#E8A050", name: "Durazno" },
+                    { color: "#6A7A30", name: "Caqui" }, { color: "#B87830", name: "Cobre" }
+                ],
+                situations: {
+                    citas: ["#C07090", "#7A5A8A", "#4A70A8", "#B04070", "#8A3A6A"],
+                    trabajo: ["#2A3A5A", "#4A6050", "#5A6075", "#304060", "#2A4A8A"],
+                    diario: ["#4A70A8", "#2A6A5A", "#C07090", "#5A6075", "#3A7A70"],
+                    noche: ["#7A5A8A", "#2A4A8A", "#8A3A6A", "#604A80", "#B04070"],
+                    casual: ["#4A70A8", "#3A7A70", "#C07090", "#5A6075", "#F0F0F8"]
+                },
+                combos: [
+                    { name: "Noche de cita", colors: ["#7A5A8A", "#F0F0F8", "#C07090"], desc: "Ciruela + blanco frío + frambuesa. Sofisticada y femenina." },
+                    { name: "Día casual", colors: ["#4A70A8", "#3A7A70", "#F0F0F8"], desc: "Azul zafiro + turquesa + blanco. Fresca y luminosa." },
+                    { name: "Reunión de trabajo", colors: ["#2A4A8A", "#5A6075", "#F0F0F8"], desc: "Azul marino + gris perla + blanco. Autoridad y claridad." },
+                    { name: "Salida de noche", colors: ["#604A80", "#8A3A6A", "#F0F0F8"], desc: "Púrpura + magenta + toque blanco. Dramática e impactante." }
+                ],
+                tips: [
+                    "Azul marino + blanco frío + ciruela es la combinación de poder para este tono.",
+                    "Los tonos joya (esmeralda, zafiro, rubí) realzan el contraste natural de la piel fría.",
+                    "Los naranjas y ocres agregan amarillo al tono frío — evitarlos cerca del rostro.",
+                    "El gris perla es el neutro perfecto: combina con todos los colores joya.",
+                    "Para una cita, ciruela o frambuesa en la prenda principal crean presencia inmediata.",
+                    "Los accesorios en plata o acero complementan y realzan este subtono de forma natural."
+                ],
+                dateTip: "Para una cita, <strong>ciruela o frambuesa</strong> en la prenda principal crean un contraste precioso con el subtono frío y proyectan sofisticación desde el primer segundo. Los accesorios en plata completan el look."
+            },
+            neutro: {
+                label: "Tono neutro",
+                desc: "Piel equilibrada: ni muy cálida ni muy fría",
+                explanation: "Los tonos neutros combinan subtonos cálidos y fríos en equilibrio. Las venas de la muñeca se ven entre azules y verdes. La piel broncea moderadamente al sol. Tanto el oro como la plata favorecen a este tono.",
+                celebs: ["Natalie Portman", "Zoe Saldaña", "Eva Mendes", "Jessica Alba", "Keanu Reeves", "John Legend"],
+                swatchColor: "#B09878",
+                favors: [
+                    { color: "#7A8A9A", name: "Azul grisáceo" }, { color: "#A87050", name: "Tostado" }, { color: "#6A8A6A", name: "Salvia" },
+                    { color: "#C09080", name: "Rosado nude" }, { color: "#3A3A5A", name: "Medianoche" }, { color: "#8A7A6A", name: "Greige" },
+                    { color: "#5A7A6A", name: "Verde salvia" }, { color: "#C0A090", name: "Arena cálida" }, { color: "#6A6A8A", name: "Lavanda gris" },
+                    { color: "#4A6A7A", name: "Azul pato" }, { color: "#A06050", name: "Terracota suave" }, { color: "#F5F0E8", name: "Blanco cálido" }
+                ],
+                avoid: [
+                    { color: "#E8E820", name: "Amarillo neón" }, { color: "#FF5010", name: "Naranja intenso" }, { color: "#FF50A0", name: "Rosa neón" },
+                    { color: "#50F050", name: "Verde neón" }, { color: "#5050FF", name: "Azul eléctrico" }, { color: "#FF2020", name: "Rojo saturado" },
+                    { color: "#F0F000", name: "Amarillo chillón" }, { color: "#C000C0", name: "Fucsia extremo" }
+                ],
+                situations: {
+                    citas: ["#C09080", "#A87050", "#7A8A9A", "#A06050", "#6A6A8A"],
+                    trabajo: ["#3A3A5A", "#6A8A6A", "#7A8A9A", "#8A7A6A", "#4A6A7A"],
+                    diario: ["#A87050", "#6A8A6A", "#C09080", "#8A7A6A", "#F5F0E8"],
+                    noche: ["#3A3A5A", "#6A6A8A", "#A06050", "#4A6A7A", "#C09080"],
+                    casual: ["#C0A090", "#6A8A6A", "#F5F0E8", "#A87050", "#7A8A9A"]
+                },
+                combos: [
+                    { name: "Noche de cita", colors: ["#3A3A5A", "#C09080", "#8A7A6A"], desc: "Medianoche + nude rosado + greige. Elegante y accesible." },
+                    { name: "Día casual", colors: ["#6A8A6A", "#F5F0E8", "#A87050"], desc: "Salvia + blanco cálido + tostado. Natural y armoniosa." },
+                    { name: "Reunión de trabajo", colors: ["#4A6A7A", "#8A7A6A", "#F5F0E8"], desc: "Azul pato + greige + blanco cálido. Profesional y equilibrada." },
+                    { name: "Salida de noche", colors: ["#6A6A8A", "#A06050", "#3A3A5A"], desc: "Lavanda gris + terracota suave + medianoche. Sofisticada y única." }
+                ],
+                tips: [
+                    "El tono neutro es versátil: se pueden mezclar cálidos y fríos con moderación sin error.",
+                    "Nude + azul medianoche funciona en cualquier ocasión y a cualquier hora.",
+                    "Evitar neones y saturaciones extremas — compiten con la piel en vez de realzarla.",
+                    "El greige (gris + beige) es el neutro definitivo para este tono — combina con todo.",
+                    "Para una cita, tostado o nude rosado en la prenda principal y azul pato en el accesorio.",
+                    "Los accesorios en oro o plata funcionan igual de bien — aprovechar esa versatilidad."
+                ],
+                dateTip: "Para una cita, <strong>rosado nude o tostado</strong> en la prenda principal proyectan calidez y presencia natural. Un toque de azul pato o lavanda gris en el accesorio añade profundidad al look."
+            }
+        };
+
+        let answers = { q1: null, q2: null, q3: null };
+        let image = null;
+
+        const fileInput = document.getElementById('file-input');
+        const dropZone = document.getElementById('drop-zone');
+        const previewContainer = document.getElementById('preview-container');
+        const previewImg = document.getElementById('preview-img');
+        const analyzeBtn = document.getElementById('analyze-btn');
+        const hintText = document.getElementById('hint-text');
+
+        dropZone.addEventListener('click', () => fileInput.click());
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (ev) => {
+                    image = ev.target.result;
+                    previewImg.src = image;
+                    previewContainer.classList.remove('hidden');
+                    checkComplete();
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        document.querySelectorAll('.quiz-opt').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const q = btn.dataset.q;
+                const val = btn.dataset.val;
+                answers[q] = val;
+                
+                // Update UI
+                btn.parentElement.querySelectorAll('.quiz-opt').forEach(b => {
+                    b.classList.remove('border-damasc-d', 'bg-damasc-xl');
+                    b.classList.add('border-transparent', 'bg-warm');
+                });
+                btn.classList.add('border-damasc-d', 'bg-damasc-xl');
+                btn.classList.remove('border-transparent', 'bg-warm');
+                
+                checkComplete();
+            });
+        });
+
+        function checkComplete() {
+            const complete = answers.q1 && answers.q2 && answers.q3 && image;
+            analyzeBtn.disabled = !complete;
+            if (complete) hintText.classList.add('hidden');
+        }
+
+        analyzeBtn.addEventListener('click', () => {
+            const votes = { calido: 0, frio: 0, neutro: 0 };
+            Object.values(answers).forEach(v => votes[v]++);
+            
+            let tone = 'neutro';
+            if (votes.calido > votes.frio && votes.calido > votes.neutro) tone = 'calido';
+            else if (votes.frio > votes.calido && votes.frio > votes.neutro) tone = 'frio';
+            
+            showResults(tone);
+        });
+
+        function showResults(tone) {
+            const data = DATA[tone];
+            document.getElementById('upload-step').classList.add('hidden');
+            document.getElementById('results-step').classList.remove('hidden');
+            window.scrollTo(0, 0);
+
+            if (image) {
+                const resImg = document.getElementById('result-img');
+                resImg.src = image;
+                resImg.classList.remove('hidden');
+            }
+
+            document.getElementById('result-swatch').style.backgroundColor = data.swatchColor;
+            document.getElementById('result-label').textContent = data.label;
+            document.getElementById('result-desc').textContent = data.desc;
+            document.getElementById('result-explanation').textContent = data.explanation;
+            
+            const celebsDiv = document.getElementById('result-celebs');
+            celebsDiv.innerHTML = data.celebs.map(c => `<span class="bg-white border border-blush rounded-full px-3 py-1 text-[11px] font-semibold text-text-m">✦ ${c}</span>`).join('');
+
+            // Answers summary
+            const summaryDiv = document.getElementById('answers-summary');
+            const labels = ['Venas', 'Metal', 'Sol'];
+            const toneLabels = {
+                calido: { q1: 'Venas verdosas', q2: 'Metal dorado/cobre', q3: 'Se broncea fácil' },
+                frio: { q1: 'Venas azules/violáceas', q2: 'Metal plateado/acero', q3: 'Se enrojece primero' },
+                neutro: { q1: 'Venas mixtas', q2: 'Ambos metales', q3: 'Bronceado con rojez' }
+            };
+            summaryDiv.innerHTML = ['q1', 'q2', 'q3'].map((k, i) => `
+                <div class="flex items-center gap-10 text-[11px]">
+                    <span class="font-bold text-text-m min-w-[40px]">${labels[i]}:</span>
+                    <span class="text-text-l">${toneLabels[answers[k]][k]}</span>
+                    <span class="ml-auto font-bold text-damasc-d">${answers[k] === tone ? '✦' : '~'}</span>
+                </div>
+            `).join('');
+
+            // Grids
+            document.getElementById('favors-grid').innerHTML = data.favors.map(f => `
+                <div class="flex flex-col items-center gap-1">
+                    <div class="w-10 h-10 rounded-full border border-black/5 shadow-sm" style="background: ${f.color}"></div>
+                    <span class="text-[9px] text-text-l text-center leading-tight">${f.name}</span>
+                </div>
+            `).join('');
+
+            document.getElementById('avoid-grid').innerHTML = data.avoid.map(f => `
+                <div class="flex flex-col items-center gap-1">
+                    <div class="w-10 h-10 rounded-full border border-black/5 shadow-sm relative overflow-hidden" style="background: ${f.color}">
+                        <div class="absolute inset-0 flex items-center justify-center text-white font-bold text-lg drop-shadow-md">×</div>
+                    </div>
+                    <span class="text-[9px] text-text-l text-center leading-tight">${f.name}</span>
+                </div>
+            `).join('');
+
+            const sitIcons = { citas: '❤️', trabajo: '💼', diario: '☕', noche: '🌙', casual: '📅' };
+            const sitLabels = { citas: 'Citas', trabajo: 'Trabajo', diario: 'Diario', noche: 'Noche', casual: 'Casual' };
+            document.getElementById('situations-grid').innerHTML = Object.keys(data.situations).map(key => `
+                <div class="bg-warm rounded-xl p-3 space-y-2">
+                    <h6 class="text-[10px] font-bold text-text-m flex items-center gap-1">${sitIcons[key]} ${sitLabels[key]}</h6>
+                    <div class="flex flex-wrap gap-1">
+                        ${data.situations[key].map(c => `<div class="w-5 h-5 rounded-full border border-black/5" style="background: ${c}"></div>`).join('')}
+                    </div>
+                </div>
+            `).join('');
+
+            document.getElementById('combos-list').innerHTML = data.combos.map(combo => `
+                <div class="bg-warm rounded-xl p-4 flex flex-col sm:flex-row sm:items-center gap-4">
+                    <div class="flex gap-2 shrink-0">
+                        ${combo.colors.map(c => `<div class="w-8 h-8 rounded-full border border-black/5 shadow-sm" style="background: ${c}"></div>`).join('')}
+                    </div>
+                    <div>
+                        <h6 class="text-xs font-bold text-brown mb-1">${combo.name}</h6>
+                        <p class="text-[11px] text-text-m leading-relaxed">${combo.desc}</p>
+                    </div>
+                </div>
+            `).join('');
+
+            document.getElementById('tips-list').innerHTML = data.tips.map((tip, i) => `
+                <div class="bg-warm rounded-xl p-4 flex gap-3 items-start">
+                    <span class="w-5 h-5 shrink-0 bg-gradient-to-br from-damasc-d to-[#9e4832] text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+                        ${i + 1}
+                    </span>
+                    <p class="text-xs text-text-m leading-relaxed">${tip}</p>
+                </div>
+            `).join('');
+
+            document.getElementById('date-tip').innerHTML = data.dateTip;
+
+            // Export logic
+            document.getElementById('export-btn').addEventListener('click', () => exportPalette(tone));
+        }
+
+        function exportPalette(tone) {
+            const data = DATA[tone];
+            const canvas = document.createElement('canvas');
+            const dpr = 2;
+            const W = 600, H = 450;
+            canvas.width = W * dpr;
+            canvas.height = H * dpr;
+            const ctx = canvas.getContext('2d');
+            ctx.scale(dpr, dpr);
+
+            ctx.fillStyle = '#FAF6F1';
+            ctx.fillRect(0, 0, W, H);
+
+            ctx.fillStyle = '#B85840';
+            ctx.fillRect(0, 0, W, 60);
+
+            ctx.fillStyle = '#fff';
+            ctx.font = 'bold 18px Georgia, serif';
+            ctx.fillText('Mi paleta de colores · ' + data.label, 20, 25);
+            ctx.font = '12px Georgia, serif';
+            ctx.fillStyle = 'rgba(255,255,255,.8)';
+            ctx.fillText('Colores que potencian tu atractivo · Sofía Arrabal', 20, 45);
+
+            ctx.fillStyle = '#B85840';
+            ctx.font = 'bold 10px Arial, sans-serif';
+            ctx.fillText('COLORES QUE TE FAVORECEN', 20, 85);
+
+            data.favors.slice(0, 6).forEach((f, i) => {
+                const x = 20 + i * 95, y = 95;
+                ctx.beginPath();
+                ctx.arc(x + 25, y + 25, 25, 0, Math.PI * 2);
+                ctx.fillStyle = f.color;
+                ctx.fill();
+                ctx.strokeStyle = 'rgba(0,0,0,.1)';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+                ctx.fillStyle = '#9A7870';
+                ctx.font = '9px Arial, sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText(f.name, x + 25, y + 65);
+                ctx.textAlign = 'left';
+            });
+
+            ctx.fillStyle = '#B85840';
+            ctx.font = 'bold 10px Arial, sans-serif';
+            ctx.fillText('COLORES A EVITAR', 20, 185);
+
+            data.avoid.slice(0, 6).forEach((f, i) => {
+                const x = 20 + i * 95, y = 195;
+                ctx.beginPath();
+                ctx.arc(x + 25, y + 25, 25, 0, Math.PI * 2);
+                ctx.fillStyle = f.color;
+                ctx.fill();
+                ctx.strokeStyle = 'rgba(0,0,0,.1)';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+                ctx.fillStyle = '#fff';
+                ctx.font = 'bold 24px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText('×', x + 25, y + 33);
+                ctx.fillStyle = '#9A7870';
+                ctx.font = '9px Arial, sans-serif';
+                ctx.fillText(f.name, x + 25, y + 65);
+                ctx.textAlign = 'left';
+            });
+
+            ctx.fillStyle = '#FAE8DF';
+            const r = 12, tx = 20, ty = 280, tw = W - 40, th = 80;
+            ctx.beginPath();
+            ctx.moveTo(tx + r, ty); ctx.lineTo(tx + tw - r, ty); ctx.quadraticCurveTo(tx + tw, ty, tx + tw, ty + r);
+            ctx.lineTo(tx + tw, ty + th - r); ctx.quadraticCurveTo(tx + tw, ty + th, tx + tw - r, ty + th);
+            ctx.lineTo(tx + r, ty + th); ctx.quadraticCurveTo(tx, ty + th, tx, ty + th - r);
+            ctx.lineTo(tx, ty + r); ctx.quadraticCurveTo(tx, ty, tx + r, ty); ctx.closePath(); ctx.fill();
+
+            ctx.fillStyle = '#B85840';
+            ctx.font = 'bold 11px Arial, sans-serif';
+            ctx.fillText('TIP PARA TU PRÓXIMA CITA', 35, 305);
+            ctx.fillStyle = '#5A3C34';
+            ctx.font = '11px Arial, sans-serif';
+            const tipText = data.dateTip.replace(/<[^>]+>/g, '');
+            const tipWords = tipText.split(' ');
+            let tipLine = '', tipY = 325;
+            tipWords.forEach(w => {
+                const test = tipLine + w + ' ';
+                if (ctx.measureText(test).width > W - 100) { ctx.fillText(tipLine, 35, tipY); tipLine = w + ' '; tipY += 15; }
+                else tipLine = test;
+            });
+            ctx.fillText(tipLine, 35, tipY);
+
+            ctx.fillStyle = '#9A7870';
+            ctx.font = '10px Arial, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('© 2025 Sofía Arrabal · El amor no se improvisa', W / 2, H - 20);
+
+            const link = document.createElement('a');
+            link.download = `mi-paleta-${tone}.png`;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }
+    </script>
+</body>
+</html>
